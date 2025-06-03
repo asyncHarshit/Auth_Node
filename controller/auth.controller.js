@@ -1,5 +1,6 @@
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs";
+import jwt from 'jsonwebtoken'
 
 // register Controller 
 const registerUser = async(req , res)=>{
@@ -60,7 +61,46 @@ const registerUser = async(req , res)=>{
 
 const loginUser = async(req , res)=>{
     try {
+
+        const {password , username} = req.body;
+        // finnd if user exist or not
+        const user = await User.findOne({username});
+       
+        if(!user){
+            res.status(400).json({
+                message : "Invalid Credentials !!",
+                success : false
+            })
+        }
+
+        // check if Password is correct or not
+
+        const isPasswordMatch = await bcrypt.compare(password , user.password);
+        if(!isPasswordMatch){
+            res.status(400).json({
+                message : "Invalid Credentials !!",
+                success : false
+            })
+        }
+
+        // Creating JWT token
+        const accessToken = jwt.sign({
+            userId : user._id,
+            username : user.username,
+            role : user.role
+        },process.env.JWT_SECRET_KEY,{
+            expiresIn : '15m'
+        })
+
+        res.json({
+            message : "Logged in sucessfully",
+            success : true,
+            accessToken
+        })
+ 
+
         
+
 
         
     } catch (error) {
