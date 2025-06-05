@@ -219,11 +219,12 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
+
     }
 
     .modal-content {
       background: #111;
-      border: 1px solid #333;
+      border: 1px solid #6af139;
       border-radius: 8px;
       padding: 32px;
       text-align: center;
@@ -363,6 +364,7 @@
       if (e.key === 'Enter') joinChat();
     });
 
+
     function joinChat() {
       const username = usernameInput.value.trim();
       if (username.length >= 2) {
@@ -432,6 +434,18 @@
       chat.appendChild(messageElement);
       chat.scrollTop = chat.scrollHeight;
     }
+    // Listen for user count updates from the server
+    socket.on("userCount", (count) => {
+      // Find the status element and update its text
+      const statusEl = document.querySelector('.status');
+      if (statusEl) {
+      statusEl.textContent = `${count} Online`;
+      }
+      // Log to browser console for debugging
+      console.log("User count updated:", count);
+    });
+  
+    
 
     // Auto-focus username input
     usernameInput.focus();

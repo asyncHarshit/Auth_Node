@@ -19,9 +19,9 @@ const getTimestamp = () => {
 };
 
 io.on("connection", (socket) => {
-  console.log(`\n🔗 ${getTimestamp()} NEW CONNECTION`);
-  console.log(`📱 Socket ID: ${socket.id}`);
-  console.log(`👥 Total connections: ${io.engine.clientsCount}`);
+  // console.log(`\n🔗 ${getTimestamp()} NEW CONNECTION`);
+  // console.log(`📱 Socket ID: ${socket.id}`);
+  // console.log(`👥 Total connections: ${io.engine.clientsCount}`);
 
   // Handle user joining
   socket.on('join', (username) => {
@@ -44,14 +44,17 @@ io.on("connection", (socket) => {
 
     users.set(socket.id, trimmedUsername);
     
-    console.log(`\n✅ ${getTimestamp()} USER JOINED`);
+    // console.log(`\n✅ ${getTimestamp()} USER JOINED`);
     console.log(`👤 Username: ${trimmedUsername}`);
-    console.log(`🆔 Socket: ${socket.id}`);
-    console.log(`👥 Online users: ${users.size}`);
+    // console.log(`🆔 Socket: ${socket.id}`);
+    // console.log(`👥 Online users: ${users.size}`);
+
+    io.emit("userCount", users.size);
 
     // Notify all clients
     socket.broadcast.emit("userJoined", trimmedUsername);
     io.emit("userList", Array.from(users.values()));
+
   });
 
   // Handle messages
@@ -63,10 +66,10 @@ io.on("connection", (socket) => {
       return;
     }
 
-    console.log(`\n💬 ${getTimestamp()} MESSAGE SENT`);
-    console.log(`👤 From: ${userData}`);
-    console.log(`📝 Message: "${trimmedMessage}"`);
-    console.log(`📡 Broadcasting to ${users.size - 1} users`);
+    // console.log(`\n💬 ${getTimestamp()} MESSAGE SENT`);
+    // console.log(`👤 From: ${userData}`);
+    // console.log(`📝 Message: "${trimmedMessage}"`);
+    // console.log(`📡 Broadcasting to ${users.size - 1} users`);
 
     socket.broadcast.emit("chatMessage", { 
       user: userData, 
@@ -84,8 +87,8 @@ io.on("connection", (socket) => {
       
       console.log(`\n❌ ${getTimestamp()} USER DISCONNECTED`);
       console.log(`👤 Username: ${username}`);
-      console.log(`🆔 Socket: ${socket.id}`);
-      console.log(`👥 Remaining users: ${users.size}`);
+      // console.log(`🆔 Socket: ${socket.id}`);
+      // console.log(`👥 Remaining users: ${users.size}`);
     }
   });
 });
