@@ -113,4 +113,50 @@ const loginUser = async(req , res)=>{
     }
 }
 
-export {registerUser , loginUser}
+const changePassword = async(req,res)=>{
+    try {
+        
+        const userId = req.userInfo.userId;
+        console.log(userId);
+        
+
+        // extrect old and new password from frontend
+        const { oldPassword , newPassword} = req.body;
+
+        // find current loggedIn user
+
+        const user = await User.findById(userId);
+
+        // check if old password is correct or not
+
+        const isPassMatch = await bcrypt.compare(oldPassword , user.password);
+        if(!isPassMatch){
+            return res.status(400).json({
+                message : "Old password is wrong",
+                success : false
+            })
+        }
+
+        // if old password is true , now Hash the new one and stored to database
+
+        const salt = await bcrypt.genSalt(10);
+        const newHashedPassword = await bcrypt.hash(newPassword , salt);
+
+        // update user password
+        user.password = newHashedPassword
+        await user.save();
+
+        return res.status(200).json({
+            message : "Password changed successfully",
+            data : user
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message : "Error in change password in auth controller"
+        })
+        console.log(error);
+        
+    }
+}
+export {registerUser , loginUser , changePassword}
